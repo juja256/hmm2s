@@ -22,7 +22,14 @@ void test1() {
 }
 
 void test2() {
-  HMM2S hmm(2, 3);
+  StochasticGrammarInGNF gr("ex.gnf");
+  HMM2S hmm(gr);
+  std::vector<unsigned> s = hmm.run();
+  std::cout << "Infered sentance of length " << s.size() << "\n";
+  for (unsigned i=0; i<s.size(); i++) {
+    std::cout << s[i] << " ";
+  }
+  std::cout << "\n";
 }
 
 void test3() {
@@ -46,7 +53,7 @@ void test3() {
 }
 
 int main() {
-  test3();
+  test2();
 
   return 0;
 }

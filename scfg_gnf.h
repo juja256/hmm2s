@@ -50,7 +50,7 @@ public:
   unsigned getGrammarSize();
   unsigned getTerminalCount();
   unsigned getNonterminalCount();
-  std::vector<GNF_RULE> getRules();
+  std::vector<GNF_RULE>& getRules();
 };
 
 #endif

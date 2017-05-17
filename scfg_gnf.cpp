@@ -172,6 +172,6 @@ unsigned StochasticGrammarInGNF::getNonterminalCount() {
   return M;
 }
 
-std::vector<GNF_RULE> StochasticGrammarInGNF::getRules () {
+std::vector<GNF_RULE>& StochasticGrammarInGNF::getRules () {
   return rules;
 }

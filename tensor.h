@@ -21,6 +21,7 @@ struct Tensor {
     for (unsigned k: dims)
       s *= k;
     mem = Blob(s*sizeof(T));
+    memset(mem.bytes, 0, s*sizeof(T));
   }
 
   Tensor(unsigned dim_size, unsigned* dims) {
@@ -30,6 +31,7 @@ struct Tensor {
     for (unsigned k=0; k<dim_size; k++)
       s *= dims[k];
     mem = Blob(s*sizeof(T));
+    memset(mem.bytes, 0, s*sizeof(T));
   }
 
   T getElement(std::initializer_list<unsigned> pos) {
@@ -51,7 +53,7 @@ struct Tensor {
       s /= ((unsigned*)(size.bytes))[i];
       index += s * ((unsigned*)(pos.begin()))[i];
     }
-    (T*)(mem.bytes)[index] = element;
+    ((T*)(mem.bytes))[index] = element;
   }
 
   T* getSlice(std::initializer_list<unsigned> pos) {

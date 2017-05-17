@@ -1,9 +1,33 @@
 #include "hmm2s.h"
+#include "settings.h"
+#include "scfg_gnf.h"
+#include <vector>
 
 HMM2S::HMM2S(unsigned M_, unsigned L_) : HMM<2>(M_, L_) {
   this->transitionPr = Tensor<double>({this->M, this->M, this->M});
   this->observationPr = Tensor<double>({this->M, this->M, this->M, this->L});
   this->startPr = Tensor<double>({this->M});
+}
+
+/*
+  SCFG in GNF to HMM2 with stack converter
+  Scenaries:
+    A -> A1, Stack.Push A2
+    A -> A1
+    A -> Stack.Top
+*/
+HMM2S::HMM2S(StochasticGrammarInGNF& grammar): HMM2S(grammar.getNonterminalCount()+1, grammar.getTerminalCount()+1) {
+  this->startPr.setElement({START_SYMBOL}, 1.0); // Start state is 1 !
+  std::vector<GNF_RULE>& rules = grammar.getRules();
+  unsigned size = grammar.getGrammarSize();
+  for (unsigned i=0; i<size; i++) {
+    /* marginalization: Pr(A -> A1, push A2) = Pr(A -> a A1 A2) + Pr(A -> b A1 A2) */
+    this->transitionPr.setElement({rules[i].lhs_nt, rules[i].rhs_nt1, rules[i].rhs_nt2},
+      this->transitionPr.getElement({rules[i].lhs_nt, rules[i].rhs_nt1, rules[i].rhs_nt2}) + rules[i].probability);
+    /* ordinary initialization of emission probabilities from raw rules of grammar */
+    this->observationPr.setElement({rules[i].lhs_nt, rules[i].rhs_nt1, rules[i].rhs_nt2, rules[i].rhs_t}, rules[i].probability);
+
+  }
 }
 
 unsigned HMM2S::start() {
@@ -28,6 +52,9 @@ unsigned HMM2S::step() {
   if (for_stack != EMPTY_STATE) {
     this->stack.push(for_stack);
   }
+  #ifdef DEBUG
+    std::cout << "HMM2S is jumping to state #" << pos / M << " pushing #" << for_stack << " to stack\n";
+  #endif
   this->takts++;
 
   if (this->cur_state_buf[0] != EMPTY_STATE) {

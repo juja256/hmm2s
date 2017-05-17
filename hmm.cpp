@@ -2,23 +2,37 @@
 #include <memory>
 #include <cstdlib>
 #include <iostream>
+#include "settings.h"
 
 unsigned sample_from_categorical(unsigned n, double* pr) {
-  std::unique_ptr<double[]> a(new double[n]);
-  a[0] = pr[0];
-  for (unsigned i = 1; i<n; i++)
-    a[i] = a[i-1] + pr[i];
+  std::unique_ptr<double[]> a(new double[n+1]);
+  a[0] = 0;
+  #ifdef DEBUG
+  std::cout << "Sampling from CDF: " << a[0] << " ";
+  #endif
+  for (unsigned i = 0; i < n; i++) {
+    a[i+1] = a[i] + pr[i];
+    #ifdef DEBUG
+    std::cout << a[i+1] << " ";
+    #endif
+  }
+  #ifdef DEBUG
+  std::cout << "\n";
+  #endif
 
-  double r = a[n-1] * (rand() / RAND_MAX);
+  double r = a[n] * ((double)rand() / RAND_MAX);
+  #ifdef DEBUG
+  std::cout << "Random: " << r << "\n";
+  #endif
   if (r < a[n-1] * 0.5) {
-    for (unsigned i=1; i<n; i++) {
+    for (unsigned i=1; i<=n; i++) {
       if (r > a[i-1] && r < a[i]) {
         return i-1;
       }
     }
   }
   else {
-    for (int i=n-1; i>1; i--) {
+    for (int i=n; i>=1; i--) {
       if (r > a[i-1] && r < a[i])
         return i-1;
     }
