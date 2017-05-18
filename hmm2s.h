@@ -5,7 +5,7 @@
 #include "hmm.h"
 #include "scfg_gnf.h"
 
-#define HMM2S_HALT 0xFFFFFFFE
+#define HMM2S_HALT HMM_HALT
 
 /* HMM with stack of order 2 by emissions */
 class HMM2S: public HMM<2> {

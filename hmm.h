@@ -7,6 +7,7 @@
 #include "ring_buffer.h"
 
 #define NO_OBSERVATION 0xFFFFFFFF
+#define HMM_HALT 0xFFFFFFFE
 #define EMPTY_STATE 0
 
 unsigned sample_from_categorical(unsigned n, double* pr);

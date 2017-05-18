@@ -34,6 +34,18 @@ struct Tensor {
     memset(mem.bytes, 0, s*sizeof(T));
   }
 
+  unsigned getNumOfDimensions() {
+    return size.getSize() / sizeof(unsigned);
+  }
+
+  unsigned getDimension(unsigned idx) {
+    return ((unsigned*)(size.bytes))[idx];
+  }
+
+  unsigned getSize() {
+    return mem.getSize() / sizeof(T);
+  }
+
   T getElement(std::initializer_list<unsigned> pos) {
     unsigned index = 0;
     unsigned s = mem.getSize() / sizeof(T);
@@ -92,7 +104,6 @@ struct Tensor {
 
     return (T*)(mem.bytes) + index;
   }
-
 
 };
 

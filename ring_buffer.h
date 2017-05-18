@@ -1,8 +1,8 @@
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
-
+#include <iostream>
 static unsigned true_mod(int a, unsigned N) {
-  if (a>0) return a % N;
+  if (a>=0) return a % N;
   else return a%N + N;
 }
 

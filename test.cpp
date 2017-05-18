@@ -7,23 +7,54 @@
 #include "hmm2s.h"
 #include "scfg_gnf.h"
 
+std::ostream& printTensorSlice(std::ostream& out, Tensor<double>& t, unsigned pos, unsigned level) {
+  unsigned cur_dim_idx = t.getNumOfDimensions() - level - 1;
+  unsigned block_sz = t.getSize();
 
+  for (unsigned i = 0; i<=cur_dim_idx; i++) {
+    block_sz /= t.getDimension(i);
+  }
+
+  if (level == 0) {
+    for (unsigned i=0; i < t.getDimension(cur_dim_idx); i++) {
+      out << ((double*)(t.mem.bytes))[pos+i] << " ";
+    }
+    return out;
+  }
+  else {
+    //out << "level# " << level << ", pos# " << pos << "\n";
+    //out << "cur_dim_idx " << cur_dim_idx << ", block_sz " << block_sz << "\n";
+    for (unsigned i=0; i < t.getDimension(cur_dim_idx); i++) {
+      printTensorSlice(out, t, pos + i*block_sz, level-1);
+      out << "\n";
+    }
+  }
+}
+
+std::ostream& operator<<(std::ostream& out, Tensor<double>& t) {
+  out << "Tensor<double>, dims={";
+  for (unsigned i=0; i<t.getNumOfDimensions(); i++)
+    out << t.getDimension(i) << ", ";
+  out << "}\n";
+  printTensorSlice(out, t, 0, t.getNumOfDimensions()-1);
+  out << "\n";
+  return out;
+}
 
 void test1() {
-  unsigned d = 7;
-  Tensor<float> a({2,2,d});
+  RingBuffer<unsigned, 2> buf;
+  buf.writeTop(5);
+  std::cout << buf[0] << " " << buf[1] << "\n";
+  buf.writeTop(4);
+  std::cout << buf[0] << " " << buf[1];
 
-  for (int i=0; i<2; i++)
-    for (int j=0; j<2; j++)
-      for (int k=0; k<d; k++)
-        std::cout<<a.getElement({i,j,k}) << " ";
-  RingBuffer<unsigned, 4> b;
-  std::cout << "\n";
 }
 
 void test2() {
   StochasticGrammarInGNF gr("ex.gnf");
   HMM2S hmm(gr);
+
+  std::cout << hmm.startPr << hmm.transitionPr << hmm.observationPr;
   std::vector<unsigned> s = hmm.run();
   std::cout << "Infered sentance of length " << s.size() << "\n";
   for (unsigned i=0; i<s.size(); i++) {
@@ -53,6 +84,7 @@ void test3() {
 }
 
 int main() {
+  //test1();
   test2();
 
   return 0;

@@ -44,7 +44,7 @@ unsigned sample_from_categorical(unsigned n, double* pr) {
 /* E - order by emissions */
 template<int E>
 HMM<E>::HMM(unsigned M_, unsigned L_):
-  M(M_+1), L(L_), takts(0) {
+  M(M_), L(L_), takts(0) {
     this->transitionPr = Tensor<double>({this->M, this->M});
     unsigned obs_dims[E+1];
     for (unsigned i=0; i<E; i++)
@@ -71,8 +71,10 @@ unsigned HMM<E>::step() {
 
   if (this->takts >= E && this->cur_state_buf[0] != EMPTY_STATE)
     this->cur_observation = sample_from_categorical( this->L, this->observationPr.template getSlice<E>(this->cur_state_buf) );
-  else
+  else if (this->takts < E)
     this->cur_observation = NO_OBSERVATION;
+  else
+    this->cur_observation = HMM_HALT;
 
   #ifdef DEBUG
   std::cout << "Stepping HMM" << "(" << this->M << ", " << this->L << "). Current state: " << this->cur_state_buf[0] << "\n";
@@ -89,8 +91,10 @@ unsigned HMM<E>::start() {
 
   if (this->takts >= E && this->cur_state_buf[0] != EMPTY_STATE)
     this->cur_observation = sample_from_categorical(this->L, this->observationPr.template getSlice<E>(this->cur_state_buf) );
-  else
+  else if (this->takts < E)
     this->cur_observation = NO_OBSERVATION;
+  else
+    this->cur_observation = HMM_HALT;
 
   #ifdef DEBUG
   std::cout << "Starting HMM" << "(" << this->M << ", " << this->L << "). Start state: " << this->cur_state_buf[0] << "\n";
@@ -129,12 +133,12 @@ std::vector<unsigned> HMM<E>::run(unsigned n) {
   }
   else {
     v.push_back(this->step());
-    if (this->cur_state_buf[0] == EMPTY_STATE)
+    if (v.back() == HMM_HALT)
       goto halt;
   }
   for (unsigned i=1; i<n; i++) {
     v.push_back(this->step());
-    if (this->cur_state_buf[0] == EMPTY_STATE)
+    if (v.back() == HMM_HALT)
       goto halt;
   }
 
@@ -150,12 +154,12 @@ std::vector<unsigned> HMM<E>::run() {
   }
   else {
     v.push_back(this->step());
-    if (this->cur_state_buf[0] == EMPTY_STATE)
+    if (v.back() == HMM_HALT)
       goto halt;
   }
   for (;;) {
     v.push_back(this->step());
-    if (this->cur_state_buf[0] == EMPTY_STATE)
+    if (v.back() == HMM_HALT)
       goto halt;
   }
 
