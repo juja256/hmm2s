@@ -52,6 +52,7 @@ void test1() {
 
 void test2() {
   StochasticGrammarInGNF gr("ex.gnf");
+  std::cout << "### HMM with stack test ###\n";
   HMM2S hmm(gr);
 
   std::cout << hmm.startPr << hmm.transitionPr << hmm.observationPr;
@@ -66,7 +67,7 @@ void test2() {
 void test3() {
   try{
     StochasticGrammarInGNF gr("ex.gnf");
-    std::cout << "SCFG in GNF test\n" <<
+    std::cout << "### SCFG in GNF test ###\n" <<
                  "size = " << gr.getGrammarSize() << "\n" <<
                  "M = " << gr.getNonterminalCount() << "\n" <<
                  "L = " << gr.getTerminalCount() << "\n";
@@ -86,6 +87,6 @@ void test3() {
 int main() {
   //test1();
   test2();
-
+  test3();
   return 0;
 }

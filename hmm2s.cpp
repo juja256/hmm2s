@@ -24,7 +24,7 @@ HMM2S::HMM2S(StochasticGrammarInGNF& grammar): HMM2S(grammar.getNonterminalCount
     /* marginalization: Pr(A -> A1, push A2) = Pr(A -> a A1 A2) + Pr(A -> b A1 A2) */
     this->transitionPr.setElement({rules[i].lhs_nt, rules[i].rhs_nt1, rules[i].rhs_nt2},
       this->transitionPr.getElement({rules[i].lhs_nt, rules[i].rhs_nt1, rules[i].rhs_nt2}) + rules[i].probability);
-    /* ordinary initialization of emission probabilities from raw rules of grammar */
+    /* initialization of emission weights from raw rules's probabilities of grammar */
     this->observationPr.setElement({rules[i].lhs_nt, rules[i].rhs_nt1, rules[i].rhs_nt2, rules[i].rhs_t}, rules[i].probability);
 
   }
