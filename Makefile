@@ -3,8 +3,8 @@ FLAGS:= -g
 
 all: test
 
-test: test.o hmm2s.o hmm.o blob.o scfg_gnf.o
-	$(GXX) $(FLAGS) test.o hmm2s.o hmm.o blob.o scfg_gnf.o -o test
+test: test.o hmm2s.o hmm.o blob.o scfg_gnf.o scfl.o
+	$(GXX) $(FLAGS) test.o hmm2s.o hmm.o blob.o scfg_gnf.o scfl.o -o test
 
 test.o: test.cpp
 	$(GXX) $(FLAGS) -c test.cpp
@@ -20,6 +20,9 @@ hmm.o: hmm.cpp
 
 scfg_gnf.o: scfg_gnf.cpp
 	$(GXX) $(FLAGS) -c scfg_gnf.cpp
+
+scfl.o: scfl.cpp
+	$(GXX) $(FLAGS) -c scfl.cpp
 
 clear:
 	rm -f *.o test

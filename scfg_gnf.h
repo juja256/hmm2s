@@ -13,6 +13,7 @@
 #define GNF_READ_ERR 6
 #define NT_INVALID 7
 #define T_INVALID 8
+#define SMALL_VOCABULARY 9
 
 #include <vector>
 
@@ -46,7 +47,7 @@ class StochasticGrammarInGNF : public StochasticGrammar {
 public:
   StochasticGrammarInGNF(const char* fn);
   ~StochasticGrammarInGNF();
-  virtual std::vector<unsigned> infer(unsigned nonterminal=START_SYMBOL);
+  std::vector<unsigned> infer(unsigned nonterminal=START_SYMBOL);
   unsigned getGrammarSize();
   unsigned getTerminalCount();
   unsigned getNonterminalCount();

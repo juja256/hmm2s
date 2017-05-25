@@ -178,5 +178,12 @@ HMM<E>::~HMM() {
 
 }
 
+template<int E>
+std::vector<unsigned> HMM<E>::infer(unsigned nonterminal) {
+  std::vector<unsigned> infered = this->run();
+  this->takts = 0;
+  return infered;
+}
+
 template class HMM<1>;
 template class HMM<2>;

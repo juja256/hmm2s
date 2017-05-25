@@ -17,6 +17,7 @@ public:
   HMM2S(StochasticGrammarInGNF& grammar);
   virtual unsigned start();
   virtual unsigned step();
+  //std::vector<unsigned> infer();
 };
 
 #endif

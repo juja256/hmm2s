@@ -5,6 +5,7 @@
 #include <vector>
 #include "tensor.h"
 #include "ring_buffer.h"
+#include "scfg_gnf.h"
 
 #define NO_OBSERVATION 0xFFFFFFFF
 #define HMM_HALT 0xFFFFFFFE
@@ -13,7 +14,7 @@
 unsigned sample_from_categorical(unsigned n, double* pr);
 
 template<int E>
-class HMM {
+class HMM: public StochasticGrammar {
 protected:
 
   unsigned M, L;
@@ -35,6 +36,7 @@ public:
   virtual unsigned run(unsigned n, unsigned* arr);
   virtual std::vector<unsigned> run(unsigned n);
   virtual std::vector<unsigned> run();
+  virtual std::vector<unsigned> infer(unsigned nonterminal=START_SYMBOL);
 };
 
 #endif

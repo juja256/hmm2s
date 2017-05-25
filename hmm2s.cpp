@@ -47,9 +47,9 @@ unsigned HMM2S::start() {
 
 unsigned HMM2S::step() {
   if ((this->cur_state_buf[0] == EMPTY_STATE) && stack.empty()) {
-    //#ifdef DEBUG
+    #ifdef DEBUG
       std::cout << "Halting HMM2S!\n";
-    //#endif
+    #endif
     return HMM2S_HALT;
   }
   unsigned pos = sample_from_categorical(M*M, this->transitionPr.getSlice({this->cur_state_buf[0]}));
@@ -82,3 +82,7 @@ unsigned HMM2S::step() {
   #endif
   return this->cur_observation;
 }
+
+/*std::vector<unsigned> HMM2S::infer() {
+  return this->run();
+}*/

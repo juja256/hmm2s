@@ -6,6 +6,7 @@
 #include "hmm.h"
 #include "hmm2s.h"
 #include "scfg_gnf.h"
+#include "scfl.h"
 
 std::ostream& printTensorSlice(std::ostream& out, Tensor<double>& t, unsigned pos, unsigned level) {
   unsigned cur_dim_idx = t.getNumOfDimensions() - level - 1;
@@ -51,7 +52,7 @@ void test1() {
 }
 
 void test2() {
-  StochasticGrammarInGNF gr("ex.gnf");
+  StochasticGrammarInGNF gr("ex2.gnf");
   std::cout << "### HMM with stack test ###\n";
   HMM2S hmm(gr);
 
@@ -66,7 +67,7 @@ void test2() {
 
 void test3() {
   try{
-    StochasticGrammarInGNF gr("ex.gnf");
+    StochasticGrammarInGNF gr("ex2.gnf");
     std::cout << "### SCFG in GNF test ###\n" <<
                  "size = " << gr.getGrammarSize() << "\n" <<
                  "M = " << gr.getNonterminalCount() << "\n" <<
@@ -84,9 +85,24 @@ void test3() {
 
 }
 
+void test4() {
+  StochasticGrammarInGNF first_grammar_provider("ex2.gnf");
+  HMM2S second_grammar_provider(first_grammar_provider);
+  std::initializer_list<std::string> vocabulary = {"непозбувна", "бентега", "турбує", "жахливо"};
+  StochasticLanguage lang1(&first_grammar_provider, vocabulary);
+  StochasticLanguage lang2(&second_grammar_provider, vocabulary);
+  std::cout << "SCFG in GNF provider generated language: \n";
+  lang1.speakSomeText(10);
+
+  std::cout << "HMM2S provider generated language: \n";
+  lang2.speakSomeText(10);
+}
+
 int main() {
   //test1();
-  test2();
-  test3();
+
+  //test2();
+  //test3();
+  test4();
   return 0;
 }
