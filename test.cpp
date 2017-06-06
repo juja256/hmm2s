@@ -1,5 +1,3 @@
-#define DEBUG 1
-
 #include "tensor.h"
 #include "ring_buffer.h"
 #include <iostream>
@@ -7,6 +5,7 @@
 #include "hmm2s.h"
 #include "scfg_gnf.h"
 #include "scfl.h"
+#include <map>
 
 std::ostream& printTensorSlice(std::ostream& out, Tensor<double>& t, unsigned pos, unsigned level) {
   unsigned cur_dim_idx = t.getNumOfDimensions() - level - 1;
@@ -88,21 +87,37 @@ void test3() {
 void test4() {
   StochasticGrammarInGNF first_grammar_provider("ex2.gnf");
   HMM2S second_grammar_provider(first_grammar_provider);
-  std::initializer_list<std::string> vocabulary = {"непозбувна", "бентега", "турбує", "жахливо"};
+  std::initializer_list<std::string> vocabulary = {"a", "b", "c", "d"};
   StochasticLanguage lang1(&first_grammar_provider, vocabulary);
   StochasticLanguage lang2(&second_grammar_provider, vocabulary);
   std::cout << "SCFG in GNF provider generated language: \n";
-  lang1.speakSomeText(10);
+  lang1.speakSomeText(100);
 
   std::cout << "HMM2S provider generated language: \n";
-  lang2.speakSomeText(10);
+  lang2.speakSomeText(100);
+}
+
+void test5() {
+  StochasticGrammarInGNF first_grammar_provider("ex2.gnf");
+  HMM2S second_grammar_provider(first_grammar_provider);
+  std::initializer_list<std::string> vocabulary = {"a", "b", "c", "d"};
+  StochasticLanguage lang1(&first_grammar_provider, vocabulary);
+  StochasticLanguage lang2(&second_grammar_provider, vocabulary);
+  std::cout << "SCFG in GNF provider generated language: \n";
+  std::map<std::string, unsigned> freq1 = lang1.countFrequencies(100);
+  for (auto& x: freq1) {
+    std::cout << x.first << ": " << x.second << "\n";
+  }
+
+  std::cout << "HMM2S provider generated language: \n";
+  std::map<std::string, unsigned> freq2 = lang2.countFrequencies(100);
+  for (auto& x: freq2) {
+    std::cout << x.first << ": " << x.second << "\n";
+  }
 }
 
 int main() {
-  //test1();
-
-  //test2();
-  //test3();
-  test4();
+  //test4();
+  test5();
   return 0;
 }
